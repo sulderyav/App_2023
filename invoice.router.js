@@ -1,33 +1,17 @@
 const express = require('express');
-
+const invoiceServices = require("../services/invoice.services");
 const router = express.Router();
 
 router.get("/", (req, res) => {
-  res.json([{
-    id: 1010,
-    description: "Salario",
-    price: "450",
-    quantity: "2"
-  }
-]);
-})
+  const allInvoices = invoiceServices.findAll();
+  res.json(allInvoices);
+});
 
-// Get un Elmento
 router.get("/:id", (req, res) => {
-  const {id} = req.params;
-  if (id === "999") {
-    res.status(404).json({
-      message: "404 not found",
-
-    });
-  }
-  res.json({
-    id: id,
-    description: "Salario",
-    price: "450",
-    quantity: "2"
-  });
-})
+  const { id } = req.params;
+  const invoice = invoiceServices.findById(id);
+  res.json(invoice);
+});
 
 router.post('/', (req, res) => {
   const body = req.body;
@@ -38,7 +22,7 @@ router.post('/', (req, res) => {
 });
 
 router.patch('/:id', (req, res) => {
-  const {id} = req.params;
+  const { id } = req.params;
   const body = req.body;
   res.json({
     message: "Update",
@@ -48,12 +32,11 @@ router.patch('/:id', (req, res) => {
 });
 
 router.delete('/:id', (req, res) => {
-  const {id} = req.params;
+  const { id } = req.params;
   res.json({
     message: "Delete",
     id,
   });
 });
-
 
 module.exports = router;

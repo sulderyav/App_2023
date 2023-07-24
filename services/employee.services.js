@@ -1,51 +1,95 @@
 const { faker } = require("@faker-js/faker");
 
-class SalaryEmployeeService {
+class EmployeeService {
   constructor() {
-    this.salaryEmployee = [];
+    this.employees = [];
     this.generate();
   }
 
   generate() {
     for (let i = 0; i < 100; i++) {
-      this.salaryEmployee.push({
-        salaryEmployee_id: i + 1,
-        get: faker.finance.amount(), 
-        toString: faker.datatype.string(),
-        validation: true    , 
+      this.employees.push({
+        employee_id: i + 1,
+        bornDate: 2002,
+        firstName: faker.person.firstName(),
+        hireDate: faker.date.future(),
+        isActive: true, 
+        lastName: faker.person.lastName(),
       });
     }
   }
 
-  find() {
-    return this.salaryEmployee;
+  findAll() {
+    return this.employees;
   }
 
-  findOne(id) {
-    return this.salaryEmployee.find((salaryEmployee) => salaryEmployee.salaryEmployee_id === id);
+  findById(id) {
+    return this.employees.find((employee) => employee.employee_id === id);
   }
 
   created(data){
-    const newsalaryEmployees ={
+    const newEmployee ={
       id: faker.string.uuid(),
       ...data
     }
-    this.salaryEmployee.push(newsalaryEmployees);
-    return newsalaryEmployees;
+    this.employees.push(newEmployee);
+    return newEmployee;
   }
 
   update(id,data){
-    const indexsalaryEmployee = this.findOne(id);
-    const updateEmployee = this.salaryEmployee[indexsalaryEmployee];
+    const indexEmployee = this.findOne(id);
+    const updateEmployee = this.employees[indexEmployee];
 
-    this.salaryEmployee[indexsalaryEmployee] = {
+    this.employees[indexEmployee] = {
       ...updateEmployee,
       ...data
     }
-    return this.salaryEmployee[indexsalaryEmployee];
+    return this.employees[indexEmployee];
     
   }
 
+
 }
 
-module.exports = SalaryEmployeeService;
+
+module.exports = EmployeeService;
+
+
+
+
+
+// class employee{
+
+//     constructor(){
+//         this.employee = [];
+//         this.generate();
+//     }
+
+//         generate(){
+//             for (let i = 0; i< 100; i++) {
+//                 this.employee.push(
+//                   {
+//                     employee_id: i + 1,
+//                     bornDate: 2002,
+//                     firstName: faker.person.firstName(),
+//                     hireDate: faker.date.hireDate(),
+//                     isActive: faker.status.isActive(),
+//                     lastName: faker.person.lastName()
+//                   }
+//                 )
+//               }
+//             }
+       
+
+//         find(){
+//             return this.employee;
+//         }
+
+//         findOne(id){
+//             return this.employee.find(em => em === id);
+//         }
+
+//     }
+
+
+//         module.exports = employee;

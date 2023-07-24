@@ -2,13 +2,13 @@ const { faker } = require("@faker-js/faker");
 
 class SalaryEmployeeService {
   constructor() {
-    this.salaryEmployees = [];
+    this.salaryEmployee = [];
     this.generate();
   }
 
   generate() {
     for (let i = 0; i < 100; i++) {
-      this.salaryEmployees.push({
+      this.salaryEmployee.push({
         salaryEmployee_id: i + 1,
         get: faker.finance.amount(), 
         toString: faker.datatype.string(),
@@ -18,12 +18,35 @@ class SalaryEmployeeService {
   }
 
   find() {
-    return this.salaryEmployees;
+    return this.salaryEmployee;
   }
 
   findOne(id) {
-    return this.salaryEmployees.find((salaryEmployee) => salaryEmployee.salaryEmployee_id === id);
+    return this.salaryEmployee.find((salaryEmployee) => salaryEmployee.salaryEmployee_id === id);
   }
+
+  created(data){
+    const newsalaryEmployees ={
+      id: faker.string.uuid(),
+      ...data
+    }
+    this.salaryEmployee.push(newsalaryEmployees);
+    return newsalaryEmployees;
+  }
+
+  update(id,data){
+    const indexsalaryEmployee = this.findOne(id);
+    const updateEmployee = this.salaryEmployee[indexsalaryEmployee];
+
+    this.salaryEmployee[indexsalaryEmployee] = {
+      ...updateEmployee,
+      ...data
+    }
+    return this.salaryEmployee[indexsalaryEmployee];
+    
+  }
+
+
 }
 
-module.exports = new SalaryEmployeeService();
+module.exports = SalaryEmployeeService;

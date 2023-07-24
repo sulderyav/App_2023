@@ -23,5 +23,25 @@ class MethodsService {
   findOne(id) {
     return this.methods.find((method) => method.methods_id === id);
   }
+  created(data){
+    const newMethods ={
+      id: faker.string.uuid(),
+      ...data
+    }
+    this.methods.push(newMethods);
+    return newMethods;
+  }
+
+  update(id,data){
+    const indexMethods = this.findOne(id);
+    const updateMethods = this.methods[indexMethods];
+
+    this.methods[indexMethods] = {
+      ...updateMethods,
+      ...data
+    }
+    return this.methods[indexMethods];
+    
+  }
 }
 module.exports = new MethodsService();

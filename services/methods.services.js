@@ -44,4 +44,4 @@ class MethodsService {
     
   }
 }
-module.exports = new MethodsService();
+module.exports = MethodsService;

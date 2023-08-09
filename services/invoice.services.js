@@ -1,12 +1,15 @@
 const { faker } = require("@faker-js/faker");
+const Boom = require("boom");
+const conexion = require ("../lib/cnPostgres");
 
 class InvoiceService {
   constructor() {
     this.invoices = [];
     this.generate();
+    
   }
 
-  generate() {
+  async generate() {
     for (let i = 0; i < 100; i++) {
       this.invoices.push({
         invoice_id: i + 1,  
@@ -17,14 +20,20 @@ class InvoiceService {
     }
   }
 
-  findAll() {
+  async find(){
+    const client = await conexion();
+    const rta =  await client.query("select * from invoice");
+    return rta.rows;
+  }
+
+  async findAll() {
     return this.invoices;
   }
 
-  findById(id) {
+  async findById(id) {
     return this.invoices.find((invoice) => invoice.invoice_id === id);
   }
-  created(data){
+  async created(data){
     const newInvoice ={
       id: faker.string.uuid(),
       ...data
@@ -33,7 +42,7 @@ class InvoiceService {
     return newInvoice;
   }
 
-  update(id,data){
+  async update(id,data){
     const indexInvoice = this.findOne(id);
     const updateInvoice = this.invoices[indexInvoice];
 
@@ -43,6 +52,12 @@ class InvoiceService {
     }
     return this.invoices[indexInvoice];
     
+  }
+  async deleted(id){
+    const client = await conexion();
+    const sql = "delete from invoice where id=${id}"
+    const rta = await client.query(sql);
+    return rta.rows ; 
   }
 
 }

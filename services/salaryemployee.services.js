@@ -1,4 +1,6 @@
 const { faker } = require("@faker-js/faker");
+const Boom = require("boom");
+const conexion = require ("../lib/cnPostgres");
 
 class SalaryEmployeeService {
   constructor() {
@@ -6,7 +8,7 @@ class SalaryEmployeeService {
     this.generate();
   }
 
-  generate() {
+  async generate() {
     for (let i = 0; i < 100; i++) {
       this.salaryEmployee.push({
         salaryEmployee_id: i + 1,
@@ -17,15 +19,21 @@ class SalaryEmployeeService {
     }
   }
 
-  find() {
+  async find(){
+    const client = await conexion();
+    const rta =  await client.query("select * from salaryemployee");
+    return rta.rows;
+  }
+
+  async find() {
     return this.salaryEmployee;
   }
 
-  findOne(id) {
+  async findOne(id) {
     return this.salaryEmployee.find((salaryEmployee) => salaryEmployee.salaryEmployee_id === id);
   }
 
-  created(data){
+  async created(data){
     const newsalaryEmployees ={
       id: faker.string.uuid(),
       ...data
@@ -34,7 +42,7 @@ class SalaryEmployeeService {
     return newsalaryEmployees;
   }
 
-  update(id,data){
+  async update(id,data){
     const indexsalaryEmployee = this.findOne(id);
     const updateEmployee = this.salaryEmployee[indexsalaryEmployee];
 
@@ -46,7 +54,12 @@ class SalaryEmployeeService {
     
   }
 
-
+  async deleted(id){
+    const client = await conexion();
+    const sql = "delete from employee where id=${id}"
+    const rta = await client.query(sql);
+    return rta.rows ; 
+  }
 }
 
 module.exports = SalaryEmployeeService;

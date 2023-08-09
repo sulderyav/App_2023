@@ -1,4 +1,6 @@
 const { faker } = require("@faker-js/faker");
+const Boom = require("boom");
+const conexion = require ("../lib/cnPostgres");
 
 class MethodsService {
   constructor() {
@@ -6,7 +8,7 @@ class MethodsService {
     this.generate();
   }
 
-  generate() {
+  async generate() {
     for (let i = 0; i < 100; i++) {
       this.methods.push({
         methods_id: i + 1,
@@ -15,15 +17,19 @@ class MethodsService {
       });
     }
   }
-
-  find() {
+  async find(){
+    const client = await conexion();
+    const rta =  await client.query("select * from methods");
+    return rta.rows;
+  }
+  async find() {
     return this.methods;
   }
 
-  findOne(id) {
+  async findOne(id) {
     return this.methods.find((method) => method.methods_id === id);
   }
-  created(data){
+  async created(data){
     const newMethods ={
       id: faker.string.uuid(),
       ...data
@@ -32,7 +38,7 @@ class MethodsService {
     return newMethods;
   }
 
-  update(id,data){
+  async update(id,data){
     const indexMethods = this.findOne(id);
     const updateMethods = this.methods[indexMethods];
 
@@ -43,5 +49,13 @@ class MethodsService {
     return this.methods[indexMethods];
     
   }
+  async deleted(id){
+    const client = await conexion();
+    const sql = "delete from methods where id=${id}"
+    const rta = await client.query(sql);
+    return rta.rows ; 
+  }
+
 }
+
 module.exports = MethodsService;

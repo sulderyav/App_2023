@@ -1,4 +1,7 @@
 const { faker } = require("@faker-js/faker");
+const Boom = require("boom");
+const conexion = require ("../lib/cnPostgres");
+
 
 class EmployeeService {
   constructor() {
@@ -6,7 +9,7 @@ class EmployeeService {
     this.generate();
   }
 
-  generate() {
+ async generate() {
     for (let i = 0; i < 100; i++) {
       this.employees.push({
         employee_id: i + 1,
@@ -18,16 +21,21 @@ class EmployeeService {
       });
     }
   }
-
-  findAll() {
+  async find(){
+    const client = await conexion();
+    const rta =  await client.query("select * from employee");
+    return rta.rows;
+  }
+  
+  async findAll() {
     return this.employees;
   }
 
-  findById(id) {
+  async findById(id) {
     return this.employees.find((employee) => employee.employee_id === id);
   }
 
-  created(data){
+  async created(data){
     const newEmployee ={
       id: faker.string.uuid(),
       ...data
@@ -36,7 +44,7 @@ class EmployeeService {
     return newEmployee;
   }
 
-  update(id,data){
+  async update(id,data){
     const indexEmployee = this.findOne(id);
     const updateEmployee = this.employees[indexEmployee];
 
@@ -47,7 +55,12 @@ class EmployeeService {
     return this.employees[indexEmployee];
     
   }
-
+async deleted(id){
+    const client = await conexion();
+    const sql = "delete from employee where id=${id}"
+    const rta = await client.query(sql);
+    return rta.rows ; 
+  }
 
 }
 
@@ -55,41 +68,3 @@ class EmployeeService {
 module.exports = EmployeeService;
 
 
-
-
-
-// class employee{
-
-//     constructor(){
-//         this.employee = [];
-//         this.generate();
-//     }
-
-//         generate(){
-//             for (let i = 0; i< 100; i++) {
-//                 this.employee.push(
-//                   {
-//                     employee_id: i + 1,
-//                     bornDate: 2002,
-//                     firstName: faker.person.firstName(),
-//                     hireDate: faker.date.hireDate(),
-//                     isActive: faker.status.isActive(),
-//                     lastName: faker.person.lastName()
-//                   }
-//                 )
-//               }
-//             }
-       
-
-//         find(){
-//             return this.employee;
-//         }
-
-//         findOne(id){
-//             return this.employee.find(em => em === id);
-//         }
-
-//     }
-
-
-//         module.exports = employee;

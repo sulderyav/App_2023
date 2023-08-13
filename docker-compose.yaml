@@ -9,3 +9,13 @@ services:
       POSTGRESS_DB: employees
     ports:
     -5432 : 5432
+  pgAdmin:
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+    PGADMIN_DEFAULT_EMAIL: sulderyarellano@dev.com
+    PGADMIN_DEFAULT_PASSWORD: secret
+  ports: 
+  -8080:80
+  depends_on:
+  -service_postgres

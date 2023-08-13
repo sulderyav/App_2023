@@ -1,34 +1,47 @@
 const express = require('express');
-const router = express.Router();
+const Employee = require("../services/employee.service");
+const {insertSchemaEmployee, updateSchemaEmployee, getOneIdSchemaEmployee} = require("../schema/employee.schema");
+const {validatorSchema} = require("../middleware/validator.schema");
 
-const employeeService = require("../services/employee.service");
-
-router.get("/", (req, res) => {
-  const allEmployees = employeeService.findAll();
-  res.json(allEmployees);
+router.get("/",async (req, res) => {
+  try {
+    const allEmployees = await service.findAll();
+  res.status(200).json(allEmployees);
+  }catch (Error){
+    next(Error)
+  }
+  
 });
 
-router.get("/:id", (req, res) => {
+router.get("/", async (req, res) => {
   const { id } = req.params;
-  const employee = employeeService.findById(id);
+  const employee = service.findById(id);
   res.json(employee);
 });
 
-router.post('/', (req, res) => {
-  const body = req.body;
-  res.status(201).json({
-    message: "Create",
-    data: body
+router.post('/', 
+  validatorSchema(insertSchemaEmployee, "body"),
+  async (req, res) => {
+    try{
+      const body = req.body;
+      const newEmployee = service.created(body);
+      res.json({
+      message: "Create",
+      data: newEmployee
   });
+  } catch (error){
+    next(error)
+  }
+  
 });
 
 router.patch('/:id', (req, res) => {
   const { id } = req.params;
   const body = req.body;
+  const updateEmployee = service.update(id, body);
   res.json({
     message: "Update",
-    data: body,
-    id,
+    updateEmployee
   });
 });
 
@@ -41,3 +54,7 @@ router.delete('/:id', (req, res) => {
 });
 
 module.exports = router;
+
+
+
+// 

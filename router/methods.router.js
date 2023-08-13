@@ -1,6 +1,8 @@
 const express = require('express');
-const methodsService = require("../services/methods.services");
-const router = express.Router();
+const Methods = require("../services/methods.services");
+const {insertSchemaMethods, updateSchemaMethods, getOneIdSchemaMethods}; require("../schema/methods.schema"); 
+const {validatorSchema} = require("../middleware/validator.schema");
+
 
 router.get("/", (req, res) => {
   const allMethods = methodsService.find();
@@ -13,12 +15,19 @@ router.get("/:id", (req, res) => {
   res.json(method);
 });
 
-router.post('/', (req, res) => {
-  const body = req.body;
-  res.status(201).json({
-    message: "Create",
-    data: body
-  });
+router.post('/', 
+validatorSchema(insertSchemaMethods, "body"),
+async (req, res) => {
+  try{
+    const body = req.body;
+    res.status(201).json({
+      message: "Create",
+      data: body
+    });
+  } catch(error){
+    next(error)
+  }
+  
 });
 
 router.patch('/:id', (req, res) => {
